@@ -8,19 +8,22 @@ public class UsuarioRegistroDTO {
     public String password; // Senha em texto plano vinda do formulário
     public String locationPreference;
     public List<String> subscribedAlerts; // Lista de Strings para os tipos de alerta
+    public String role;
 
     // Construtor vazio
     public UsuarioRegistroDTO() {
     }
 
     // Construtor
-    public UsuarioRegistroDTO(String nomeCompleto, String email, String password, String locationPreference, List<String> subscribedAlerts) {
+    public UsuarioRegistroDTO(String nomeCompleto, String email, String password, String locationPreference, List<String> subscribedAlerts, String role) {
         this.nomeCompleto = nomeCompleto;
         this.email = email;
         this.password = password;
         this.locationPreference = locationPreference;
         this.subscribedAlerts = subscribedAlerts;
+        this.role = role;
     }
+
 
     // Getters e Setters
     public String getNomeCompleto() {
@@ -61,5 +64,13 @@ public class UsuarioRegistroDTO {
 
     public void setSubscribedAlerts(List<String> subscribedAlerts) {
         this.subscribedAlerts = subscribedAlerts;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
