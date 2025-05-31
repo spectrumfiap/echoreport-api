@@ -13,15 +13,14 @@ import java.util.List;
 public class ReporteRepository {
     private static final Logger logger = LogManager.getLogger(ReporteRepository.class);
     private static final String TABLE_NAME = "ER_REPORTES";
-    private static final String ID_COLUMN_NAME_DB = "ID"; // Nome da coluna ID no banco
+    private static final String ID_COLUMN_NAME_DB = "ID";
 
     public void registrar(Reporte reporte) {
-        // ID não é incluído no INSERT pois é autoincrementado
         String sql = "INSERT INTO " + TABLE_NAME +
-                " (REPORTER_NAME, EVENT_TYPE, DESCRIPTION, LOCATION, IMAGE_URL, USER_ID, CREATED_AT) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                " (REPORTER_NAME, EVENT_TYPE, DESCRIPTION, LOCATION, IMAGE_URL, USER_ID, CREATED_AT, STATUS, SEVERITY, ADMIN_NOTES) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        String[] columnNamesToReturn = new String[] { ID_COLUMN_NAME_DB }; // Especifica a coluna ID
+        String[] columnNamesToReturn = new String[] { ID_COLUMN_NAME_DB };
 
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, columnNamesToReturn)) {
@@ -39,12 +38,16 @@ public class ReporteRepository {
             }
 
             stmt.setTimestamp(7, Timestamp.valueOf(reporte.getCreatedAt() != null ? reporte.getCreatedAt() : LocalDateTime.now()));
+            stmt.setString(8, reporte.getStatus());
+            stmt.setString(9, reporte.getSeverity());
+            stmt.setString(10, reporte.getAdminNotes());
+
 
             int res = stmt.executeUpdate();
             if (res > 0) {
                 try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
-                        reporte.setId(generatedKeys.getInt(1)); // Pega pelo índice
+                        reporte.setId(generatedKeys.getInt(1));
                         logger.info("✅ Reporte registrado com sucesso! ID gerado: " + reporte.getId());
                     } else {
                         throw new SQLException("Falha ao criar reporte, nenhum ID obtido.");
@@ -61,8 +64,7 @@ public class ReporteRepository {
 
     public List<Reporte> buscarTodos() {
         List<Reporte> lista = new ArrayList<>();
-        // Usa ID como nome da coluna
-        String sql = "SELECT ID, REPORTER_NAME, EVENT_TYPE, DESCRIPTION, LOCATION, IMAGE_URL, USER_ID, CREATED_AT FROM " +
+        String sql = "SELECT ID, REPORTER_NAME, EVENT_TYPE, DESCRIPTION, LOCATION, IMAGE_URL, USER_ID, CREATED_AT, STATUS, SEVERITY, ADMIN_NOTES FROM " +
                 TABLE_NAME + " ORDER BY CREATED_AT DESC";
 
         try (Connection conn = DatabaseConfig.getConnection();
@@ -71,7 +73,7 @@ public class ReporteRepository {
 
             while (rs.next()) {
                 Reporte reporte = new Reporte();
-                reporte.setId(rs.getInt("ID")); // CORRIGIDO para "ID"
+                reporte.setId(rs.getInt("ID"));
                 reporte.setReporterName(rs.getString("REPORTER_NAME"));
                 reporte.setEventType(rs.getString("EVENT_TYPE"));
                 reporte.setDescription(rs.getString("DESCRIPTION"));
@@ -89,6 +91,9 @@ public class ReporteRepository {
                 if (ts != null) {
                     reporte.setCreatedAt(ts.toLocalDateTime());
                 }
+                reporte.setStatus(rs.getString("STATUS"));
+                reporte.setSeverity(rs.getString("SEVERITY"));
+                reporte.setAdminNotes(rs.getString("ADMIN_NOTES"));
                 lista.add(reporte);
             }
         } catch (SQLException e) {
@@ -99,8 +104,8 @@ public class ReporteRepository {
     }
 
     public Reporte buscarPorId(int id) {
-        String sql = "SELECT ID, REPORTER_NAME, EVENT_TYPE, DESCRIPTION, LOCATION, IMAGE_URL, USER_ID, CREATED_AT FROM " +
-                TABLE_NAME + " WHERE ID = ?"; // CORRIGIDO para "ID"
+        String sql = "SELECT ID, REPORTER_NAME, EVENT_TYPE, DESCRIPTION, LOCATION, IMAGE_URL, USER_ID, CREATED_AT, STATUS, SEVERITY, ADMIN_NOTES FROM " +
+                TABLE_NAME + " WHERE ID = ?";
         Reporte reporte = null;
 
         try (Connection conn = DatabaseConfig.getConnection();
@@ -111,7 +116,7 @@ public class ReporteRepository {
 
             if (rs.next()) {
                 reporte = new Reporte();
-                reporte.setId(rs.getInt("ID")); // CORRIGIDO para "ID"
+                reporte.setId(rs.getInt("ID"));
                 reporte.setReporterName(rs.getString("REPORTER_NAME"));
                 reporte.setEventType(rs.getString("EVENT_TYPE"));
                 reporte.setDescription(rs.getString("DESCRIPTION"));
@@ -129,6 +134,9 @@ public class ReporteRepository {
                 if (ts != null) {
                     reporte.setCreatedAt(ts.toLocalDateTime());
                 }
+                reporte.setStatus(rs.getString("STATUS"));
+                reporte.setSeverity(rs.getString("SEVERITY"));
+                reporte.setAdminNotes(rs.getString("ADMIN_NOTES"));
             }
         } catch (SQLException e) {
             logger.error("❌ Erro ao buscar Reporte por ID: " + id + " Erro: " + e.getMessage(), e);
@@ -139,8 +147,8 @@ public class ReporteRepository {
 
     public void atualizar(Reporte reporte) {
         String sql = "UPDATE " + TABLE_NAME +
-                " SET EVENT_TYPE = ?, DESCRIPTION = ?, LOCATION = ?, IMAGE_URL = ? " +
-                "WHERE ID = ?"; // CORRIGIDO para "ID"
+                " SET EVENT_TYPE = ?, DESCRIPTION = ?, LOCATION = ?, IMAGE_URL = ?, STATUS = ?, REPORTER_NAME = ?, SEVERITY = ?, ADMIN_NOTES = ? " +
+                "WHERE ID = ?";
 
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -149,7 +157,11 @@ public class ReporteRepository {
             stmt.setString(2, reporte.getDescription());
             stmt.setString(3, reporte.getLocation());
             stmt.setString(4, reporte.getImageUrl());
-            stmt.setInt(5, reporte.getId());
+            stmt.setString(5, reporte.getStatus());
+            stmt.setString(6, reporte.getReporterName());
+            stmt.setString(7, reporte.getSeverity());
+            stmt.setString(8, reporte.getAdminNotes());
+            stmt.setInt(9, reporte.getId());
 
             int res = stmt.executeUpdate();
             if (res > 0) {
@@ -164,7 +176,7 @@ public class ReporteRepository {
     }
 
     public void deletar(int id) {
-        String sql = "DELETE FROM " + TABLE_NAME + " WHERE ID = ?"; // CORRIGIDO para "ID"
+        String sql = "DELETE FROM " + TABLE_NAME + " WHERE ID = ?";
 
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

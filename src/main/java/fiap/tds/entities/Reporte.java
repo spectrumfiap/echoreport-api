@@ -2,22 +2,25 @@ package fiap.tds.entities;
 
 import java.time.LocalDateTime;
 
-public class Reporte {
+public class    Reporte {
     private int id;
     private String reporterName;
     private String eventType;
     private String description;
     private String location;
-    private String imageUrl; // URL ou caminho para a imagem, após o ‘upload’
+    private String imageUrl;
     private Integer userId; // ID do usuário que fez o reporte, pode ser nulo
     private LocalDateTime createdAt; // Data e hora da criação do reporte
+    private String status; // (ex: "novo", "verificado", "falso_positivo")
+    private String severity; // (ex: "baixo", "médio", "alto")
+    private String adminNotes; // Notas do administrador sobre o reporte, pode ser nulo ou vazio
 
     // Construtor vazio
     public Reporte() {
     }
 
     // Construtor
-    public Reporte(int id, String reporterName, String eventType, String description, String location, String imageUrl, Integer userId, LocalDateTime createdAt) {
+    public Reporte(int id, String reporterName, String eventType, String description, String location, String imageUrl, Integer userId, LocalDateTime createdAt, String status, String severity, String adminNotes) {
         this.id = id;
         this.reporterName = reporterName;
         this.eventType = eventType;
@@ -26,6 +29,9 @@ public class Reporte {
         this.imageUrl = imageUrl;
         this.userId = userId;
         this.createdAt = createdAt;
+        this.status = status;
+        this.severity = severity;
+        this.adminNotes = adminNotes;
     }
 
     // Getters e Setters
@@ -91,6 +97,30 @@ public class Reporte {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getSeverity() {
+        return severity;
+    }
+
+    public void setSeverity(String severity) {
+        this.severity = severity;
+    }
+
+    public String getAdminNotes() {
+        return adminNotes;
+    }
+
+    public void setAdminNotes(String adminNotes) {
+        this.adminNotes = adminNotes;
     }
 }
 
