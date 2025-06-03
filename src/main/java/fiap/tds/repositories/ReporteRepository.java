@@ -17,7 +17,7 @@ public class ReporteRepository {
 
     public void registrar(Reporte reporte) {
         String sql = "INSERT INTO " + TABLE_NAME +
-                " (REPORTER_NAME, EVENT_TYPE, DESCRIPTION, LOCATION, IMAGE_URL, USER_ID, CREATED_AT, STATUS, SEVERITY, ADMIN_NOTES) " +
+                " (REPORTER_NAME, EVENT_TYPE, DESCRIPTION, LOCATION, IMAGE_URL, ID_USUARIO, CREATED_AT, STATUS, SEVERITY, ADMIN_NOTES) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         String[] columnNamesToReturn = new String[] { ID_COLUMN_NAME_DB };
@@ -64,7 +64,7 @@ public class ReporteRepository {
 
     public List<Reporte> buscarTodos() {
         List<Reporte> lista = new ArrayList<>();
-        String sql = "SELECT ID, REPORTER_NAME, EVENT_TYPE, DESCRIPTION, LOCATION, IMAGE_URL, USER_ID, CREATED_AT, STATUS, SEVERITY, ADMIN_NOTES FROM " +
+        String sql = "SELECT ID, REPORTER_NAME, EVENT_TYPE, DESCRIPTION, LOCATION, IMAGE_URL, ID_USUARIO, CREATED_AT, STATUS, SEVERITY, ADMIN_NOTES FROM " +
                 TABLE_NAME + " ORDER BY CREATED_AT DESC";
 
         try (Connection conn = DatabaseConfig.getConnection();
@@ -80,7 +80,7 @@ public class ReporteRepository {
                 reporte.setLocation(rs.getString("LOCATION"));
                 reporte.setImageUrl(rs.getString("IMAGE_URL"));
 
-                int userIdDb = rs.getInt("USER_ID");
+                int userIdDb = rs.getInt("ID_USUARIO");
                 if (rs.wasNull()) {
                     reporte.setUserId(null);
                 } else {
@@ -104,7 +104,7 @@ public class ReporteRepository {
     }
 
     public Reporte buscarPorId(int id) {
-        String sql = "SELECT ID, REPORTER_NAME, EVENT_TYPE, DESCRIPTION, LOCATION, IMAGE_URL, USER_ID, CREATED_AT, STATUS, SEVERITY, ADMIN_NOTES FROM " +
+        String sql = "SELECT ID, REPORTER_NAME, EVENT_TYPE, DESCRIPTION, LOCATION, IMAGE_URL, ID_USUARIO, CREATED_AT, STATUS, SEVERITY, ADMIN_NOTES FROM " +
                 TABLE_NAME + " WHERE ID = ?";
         Reporte reporte = null;
 
@@ -123,7 +123,7 @@ public class ReporteRepository {
                 reporte.setLocation(rs.getString("LOCATION"));
                 reporte.setImageUrl(rs.getString("IMAGE_URL"));
 
-                int userIdDb = rs.getInt("USER_ID");
+                int userIdDb = rs.getInt("ID_USUARIO");
                 if (rs.wasNull()) {
                     reporte.setUserId(null);
                 } else {
