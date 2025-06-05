@@ -42,7 +42,7 @@ public class ReporteService {
         novoReporte.setDescription(reporteDTO.getDescription());
         novoReporte.setLocation(reporteDTO.getLocation());
         novoReporte.setUserId(reporteDTO.getUserId());
-        novoReporte.setCreatedAt(LocalDateTime.now());
+        novoReporte.setCreatedAt(LocalDateTime.now()); // Define o momento da criação
 
         novoReporte.setStatus("novo");
         novoReporte.setSeverity("nao_definida");
@@ -106,16 +106,33 @@ public class ReporteService {
         if (reporteComNovosDados.getAdminNotes() != null) {
             existente.setAdminNotes(reporteComNovosDados.getAdminNotes());
         } else {
-            existente.setAdminNotes("");
+            existente.setAdminNotes(existente.getAdminNotes() !=null ? existente.getAdminNotes() : "");
         }
 
-        if (reporteComNovosDados.getReporterName() != null) {
+        if (reporteComNovosDados.getReporterName() != null && !reporteComNovosDados.getReporterName().trim().isEmpty()) {
             existente.setReporterName(reporteComNovosDados.getReporterName());
         }
 
         if (reporteComNovosDados.getImageUrl() != null) {
-            existente.setImageUrl(reporteComNovosDados.getImageUrl());
+            if (existente.getImageUrl() != null && !existente.getImageUrl().equals(reporteComNovosDados.getImageUrl())) {
+                try {
+                    fileUploadUtil.deletarImagem(existente.getImageUrl());
+                } catch (Exception e) {
+                    System.err.println("Falha ao tentar deletar imagem antiga durante atualização do reporte " + id + ": " + e.getMessage());
+                }
+            }
+            existente.setImageUrl(reporteComNovosDados.getImageUrl().trim().isEmpty() ? null : reporteComNovosDados.getImageUrl());
+        } else {
+            if (existente.getImageUrl() != null) {
+                try {
+                    fileUploadUtil.deletarImagem(existente.getImageUrl());
+                } catch (Exception e) {
+                    System.err.println("Falha ao tentar deletar imagem antiga (URL nula) durante atualização do reporte " + id + ": " + e.getMessage());
+                }
+            }
+            existente.setImageUrl(null);
         }
+
 
         repository.atualizar(existente);
         return existente;
@@ -135,5 +152,20 @@ public class ReporteService {
             }
         }
         repository.deletar(id);
+    }
+
+    public Reporte atualizarStatusDoReporte(int id, String novoStatus) {
+        if (id <= 0) {
+            throw new BadRequestException("ID do reporte deve ser um número positivo.");
+        }
+        if (novoStatus == null || novoStatus.trim().isEmpty()) {
+            throw new BadRequestException("O novo status não pode ser nulo ou vazio.");
+        }
+
+        Reporte existente = buscarPorId(id);
+        existente.setStatus(novoStatus);
+
+        repository.atualizar(existente);
+        return existente;
     }
 }
