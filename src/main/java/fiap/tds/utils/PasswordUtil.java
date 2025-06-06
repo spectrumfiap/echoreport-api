@@ -1,9 +1,7 @@
-package fiap.tds.utils; // Ou seu pacote de utilitários
+package fiap.tds.utils;
 
 import org.mindrot.jbcrypt.BCrypt;
-// import jakarta.enterprise.context.ApplicationScoped; // Pode ser um bean se preferir
 
-// @ApplicationScoped // Descomente se quiser injetar
 public class PasswordUtil {
 
     public String hashPassword(String plainTextPassword) {

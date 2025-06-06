@@ -95,7 +95,6 @@ public class AbrigoService {
         if (abrigo.getAddress() == null || abrigo.getAddress().trim().isEmpty()) {
             throw new BadRequestException("Endereço do abrigo é obrigatório para atualização.");
         }
-        // Adicione outras validações conforme necessário, similares ao método registrar
 
         Abrigo existente = repository.buscarPorId(id);
         if (existente == null) {
@@ -121,7 +120,6 @@ public class AbrigoService {
         // Verifica se o abrigo existe antes de tentar deletar
         Abrigo existente = repository.buscarPorId(id); // buscarPorId já lança NotFoundException se não encontrar
         if (existente == null) {
-            // Esta verificação é redundante se buscarPorId já lança a exceção, mas mantida para clareza.
             throw new NotFoundException("Abrigo com ID " + id + " não encontrado para exclusão.");
         }
 

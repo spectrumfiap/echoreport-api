@@ -29,7 +29,7 @@ public class ReporteComImagemDTO {
 
     @RestForm("userId")
     @PartType(MediaType.TEXT_PLAIN)
-    public Integer userId; // Opcional
+    public Integer userId;
 
     // Construtor vazio
     public ReporteComImagemDTO() {

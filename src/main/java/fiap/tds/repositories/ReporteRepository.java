@@ -15,6 +15,12 @@ public class ReporteRepository {
     private static final String TABLE_NAME = "ER_REPORTES";
     private static final String ID_COLUMN_NAME_DB = "ID";
 
+    /**
+     * Registra um novo reporte no banco de dados.
+     *
+     * @param reporte O objeto Reporte a ser registrado.
+     * @throws RuntimeException Se ocorrer um erro de banco de dados.
+     */
     public void registrar(Reporte reporte) {
         String sql = "INSERT INTO " + TABLE_NAME +
                 " (REPORTER_NAME, EVENT_TYPE, DESCRIPTION, LOCATION, IMAGE_URL, ID_USUARIO, CREATED_AT, STATUS, SEVERITY, ADMIN_NOTES) " +
@@ -62,6 +68,12 @@ public class ReporteRepository {
         }
     }
 
+    /**
+     * Busca todos os reportes no banco de dados.
+     *
+     * @return Uma lista de objetos Reporte.
+     * @throws RuntimeException Se ocorrer um erro de banco de dados.
+     */
     public List<Reporte> buscarTodos() {
         List<Reporte> lista = new ArrayList<>();
         String sql = "SELECT ID, REPORTER_NAME, EVENT_TYPE, DESCRIPTION, LOCATION, IMAGE_URL, ID_USUARIO, CREATED_AT, STATUS, SEVERITY, ADMIN_NOTES FROM " +
@@ -103,6 +115,13 @@ public class ReporteRepository {
         return lista;
     }
 
+    /**
+     * Busca um reporte pelo ID no banco de dados.
+     *
+     * @param id O ID do reporte a ser buscado.
+     * @return O objeto Reporte correspondente ao ID, ou null se não encontrado.
+     * @throws RuntimeException Se ocorrer um erro de banco de dados.
+     */
     public Reporte buscarPorId(int id) {
         String sql = "SELECT ID, REPORTER_NAME, EVENT_TYPE, DESCRIPTION, LOCATION, IMAGE_URL, ID_USUARIO, CREATED_AT, STATUS, SEVERITY, ADMIN_NOTES FROM " +
                 TABLE_NAME + " WHERE ID = ?";
@@ -145,6 +164,12 @@ public class ReporteRepository {
         return reporte;
     }
 
+    /**
+     * Atualiza um reporte no banco de dados.
+     *
+     * @param reporte O objeto Reporte com os novos dados.
+     * @throws RuntimeException Se ocorrer um erro de banco de dados.
+     */
     public void atualizar(Reporte reporte) {
         String sql = "UPDATE " + TABLE_NAME +
                 " SET EVENT_TYPE = ?, DESCRIPTION = ?, LOCATION = ?, IMAGE_URL = ?, STATUS = ?, REPORTER_NAME = ?, SEVERITY = ?, ADMIN_NOTES = ? " +
@@ -175,6 +200,12 @@ public class ReporteRepository {
         }
     }
 
+    /**
+     * Deleta um reporte pelo ID no banco de dados.
+     *
+     * @param id O ID do reporte a ser deletado.
+     * @throws RuntimeException Se ocorrer um erro de banco de dados.
+     */
     public void deletar(int id) {
         String sql = "DELETE FROM " + TABLE_NAME + " WHERE ID = ?";
 

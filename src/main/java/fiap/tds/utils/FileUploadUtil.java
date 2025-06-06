@@ -60,10 +60,6 @@ public class FileUploadUtil {
             return;
         }
         try {
-            // Extrai o nome do arquivo da URL/caminho relativo
-            // Ex: imageUrl = /uploads/report-images/arquivo.png
-            //     imageBaseUrl = /uploads/report-images
-            //     fileName = arquivo.png
             String fileName = imageUrl.substring(imageBaseUrl.length() + 1);
             Path fileToDelete = this.rootLocation.resolve(fileName).normalize().toAbsolutePath();
 

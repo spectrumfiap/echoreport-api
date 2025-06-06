@@ -9,12 +9,9 @@ import fiap.tds.exceptions.NotFoundException;
 import fiap.tds.utils.PasswordUtil;
 
 import jakarta.enterprise.context.ApplicationScoped;
-// import jakarta.inject.Inject; // Se PasswordUtil for um bean CDI
 
 import java.time.LocalDateTime;
-import java.util.Arrays; // Para o DTO de registro
 import java.util.List;
-// import java.util.UUID; // Não mais necessário se o ID for int autoincrementado
 
 @ApplicationScoped
 public class UsuarioService {
@@ -43,7 +40,7 @@ public class UsuarioService {
         }
 
         Usuario novoUsuario = new Usuario();
-        // O ID será gerado pelo banco, então não definimos aqui.
+        // O ID será gerado pelo banco, então não definimos aqui
         novoUsuario.setNomeCompleto(registroDTO.getNomeCompleto());
         novoUsuario.setEmail(registroDTO.getEmail().toLowerCase());
         novoUsuario.setPasswordHash(passwordUtil.hashPassword(registroDTO.getPassword()));

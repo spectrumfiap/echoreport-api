@@ -13,7 +13,7 @@ public class Mapa {
     private String reason;
     private LocalDateTime lastUpdatedTimestamp;
 
-    // Construtor padrão
+    // Construtor vazio
     public Mapa() {
     }
 
@@ -30,7 +30,7 @@ public class Mapa {
         this.lastUpdatedTimestamp = lastUpdatedTimestamp;
     }
 
-    // Getters e Setters para todos os campos
+    // Getters e Setters
 
     public int getId() {
         return id;

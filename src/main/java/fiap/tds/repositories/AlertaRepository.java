@@ -12,8 +12,7 @@ import java.util.List;
 
 public class AlertaRepository {
     private static final Logger logger = LogManager.getLogger(AlertaRepository.class);
-
-    // Nome da tabela no banco de dados. Ajuste conforme o seu esquema.
+    // Nome da tabela no banco de dados
     private static final String TABLE_NAME = "ER_ALERTAS";
 
     /**

@@ -24,7 +24,7 @@ public class Alerta {
         this.publishedAt = publishedAt;
     }
 
-    // Getters e Setters para todos os campos
+    // Getters e Setters
 
     public int getId() {
         return id;

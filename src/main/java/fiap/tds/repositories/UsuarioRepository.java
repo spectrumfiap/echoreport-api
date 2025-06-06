@@ -13,24 +13,23 @@ import java.util.List;
 public class UsuarioRepository {
         private static final Logger logger = LogManager.getLogger(UsuarioRepository.class);
         private static final String TABLE_NAME = "ER_USUARIOS";
-        // Não precisamos mais da constante ID_COLUMN_NAME se usarmos o índice
         private static final String SUBSCRIBED_ALERTS_DELIMITER = ",";
 
+        /**
+         * Registra um novo usuário no banco de dados.
+         *
+         * @param usuario O objeto Usuario a ser registrado.
+         * @throws RuntimeException Se ocorrer um erro de banco de dados.
+         */
         public void registrar(Usuario usuario) {
             String sql = "INSERT INTO " + TABLE_NAME +
                     " (NOME_COMPLETO, EMAIL, PASSWORD_HASH, LOCATION_PREFERENCE, SUBSCRIBED_ALERTS, ROLE, CREATED_AT) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-            // Especifique o nome da coluna da chave primária a ser retornada.
-            // Mesmo que vamos usar o índice, especificar o nome pode ajudar o driver em alguns casos
-            // ou ser necessário dependendo da versão exata do driver/Oracle.
+
             String[] columnNamesToReturn = new String[] { "ID_USUARIO" }; // Nome da PK na tabela ER_USUARIOS
 
             try (Connection conn = DatabaseConfig.getConnection();
-                 // Tente passar o array com o nome da coluna. Se isso ainda causar ORA-17023 ao tentar ler pelo NOME,
-                 // o problema é especificamente na leitura pelo nome do ResultSet de generatedKeys com seu driver.
-                 // Mas o erro ORA-17023 "Recurso não suportado" geralmente acontece na chamada getInt("NOME_COLUNA")
-                 // no OracleReturnResultSet se ele não suportar busca por nome para generated keys.
                  PreparedStatement stmt = conn.prepareStatement(sql, columnNamesToReturn)) { // Ou Statement.RETURN_GENERATED_KEYS se columnNamesToReturn não funcionar
 
                 stmt.setString(1, usuario.getNomeCompleto());
@@ -50,9 +49,6 @@ public class UsuarioRepository {
                 if (res > 0) {
                     try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
                         if (generatedKeys.next()) {
-                            // **VOLTANDO A USAR O ÍNDICE 1**
-                            // Isto assume que a primeira coluna retornada por getGeneratedKeys()
-                            // é o valor da sua chave primária autoincrementada.
                             usuario.setUserId(generatedKeys.getInt(1));
                             logger.info("✅ Usuário registrado com sucesso! ID: " + usuario.getUserId());
                         } else {
@@ -69,6 +65,14 @@ public class UsuarioRepository {
                 throw new RuntimeException("Erro de banco de dados ao registrar usuário.", e);
             }
         }
+
+    /**
+        * Busca um usuário pelo email.
+        *
+        * @param email O email do usuário a ser buscado.
+        * @return O objeto Usuario correspondente ao email, ou null se não encontrado.
+        * @throws RuntimeException Se ocorrer um erro de banco de dados.
+        */
 
     public Usuario buscarPorEmail(String email) {
         String sql = "SELECT ID_USUARIO, NOME_COMPLETO, EMAIL, PASSWORD_HASH, LOCATION_PREFERENCE, SUBSCRIBED_ALERTS, ROLE, CREATED_AT FROM " + TABLE_NAME + " WHERE EMAIL = ?";
@@ -104,6 +108,13 @@ public class UsuarioRepository {
         return usuario;
     }
 
+    /**
+     * Busca um usuário pelo ID.
+     *
+     * @param userId O ID do usuário a ser buscado.
+     * @return O objeto Usuario correspondente ao ID, ou null se não encontrado.
+     * @throws RuntimeException Se ocorrer um erro de banco de dados.
+     */
     public Usuario buscarPorId(int userId) { // Parâmetro e tipo de retorno ajustados para int
         String sql = "SELECT ID_USUARIO, NOME_COMPLETO, EMAIL, PASSWORD_HASH, LOCATION_PREFERENCE, SUBSCRIBED_ALERTS, ROLE, CREATED_AT FROM " + TABLE_NAME + " WHERE ID_USUARIO = ?";
         Usuario usuario = null;
@@ -138,6 +149,12 @@ public class UsuarioRepository {
         return usuario;
     }
 
+    /**
+     * Lista todos os usuários cadastrados no banco de dados.
+     *
+     * @return Uma lista de objetos Usuario representando todos os usuários.
+     * @throws RuntimeException Se ocorrer um erro de banco de dados.
+     */
     public List<Usuario> listarTodos() {
         List<Usuario> lista = new ArrayList<>();
         String sql = "SELECT ID_USUARIO, NOME_COMPLETO, EMAIL, LOCATION_PREFERENCE, SUBSCRIBED_ALERTS, ROLE, CREATED_AT FROM " + TABLE_NAME + " ORDER BY NOME_COMPLETO"; // Removido PASSWORD_HASH da listagem geral
@@ -170,7 +187,12 @@ public class UsuarioRepository {
         return lista;
     }
 
-    // Atualiza dados do usuário, exceto senha. Para senha, use um método dedicado.
+    /**
+     * Atualiza os dados de um usuário no banco de dados.
+     *
+     * @param usuario O objeto Usuario com os dados atualizados.
+     * @throws RuntimeException Se ocorrer um erro de banco de dados.
+     */
     public void atualizar(Usuario usuario) {
         String sql = "UPDATE " + TABLE_NAME + " SET NOME_COMPLETO = ?, EMAIL = ?, LOCATION_PREFERENCE = ?, SUBSCRIBED_ALERTS = ?, ROLE = ? WHERE ID_USUARIO = ?";
         try (Connection conn = DatabaseConfig.getConnection();
@@ -199,7 +221,14 @@ public class UsuarioRepository {
         }
     }
 
-    // Método específico para atualizar apenas o hash da senha.
+
+    /**
+     * Atualiza o hash da senha de um usuário no banco de dados.
+     *
+     * @param userId O ID do usuário cujo hash de senha será atualizado.
+     * @param novoPasswordHash O novo hash da senha a ser definido.
+     * @throws RuntimeException Se ocorrer um erro de banco de dados.
+     */
     public void atualizarPasswordHash(int userId, String novoPasswordHash) {
         String sql = "UPDATE " + TABLE_NAME + " SET PASSWORD_HASH = ? WHERE ID_USUARIO = ?";
         try (Connection conn = DatabaseConfig.getConnection();
@@ -214,6 +243,12 @@ public class UsuarioRepository {
         }
     }
 
+    /**
+     * Deleta um usuário pelo ID no banco de dados.
+     *
+     * @param userId O ID do usuário a ser deletado.
+     * @throws RuntimeException Se ocorrer um erro de banco de dados.
+     */
     public void deletar(int userId) { // Parâmetro e tipo de retorno ajustados para int
         String sql = "DELETE FROM " + TABLE_NAME + " WHERE ID_USUARIO = ?";
         try (Connection conn = DatabaseConfig.getConnection();

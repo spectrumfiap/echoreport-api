@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseConfig {
-    /* Passar credenciais do banco de dados Oracle */
+    /* Credenciais do banco de dados Oracle */
 
     public static final String URL ="jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL";
     public static final String USER = "RM561061";

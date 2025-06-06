@@ -17,7 +17,7 @@ public class MapaRepository {
 
     /**
      * Registra uma nova área de risco (Mapa) no banco de dados.
-     * O ‘ID’ é gerado pelo banco de dados (autoincremento).
+     * O ID é gerado pelo banco de dados (autoincremento).
      */
     public void registrar(Mapa mapa) {
         var sql = "INSERT INTO " + TABLE_NAME + " (latitude, longitude, radius, risk_level, title, description, reason, last_updated_timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
