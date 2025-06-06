@@ -11,6 +11,7 @@ A **EchoReport API** é o coração do sistema EchoReport, uma plataforma colabo
 
 Este projeto foi desenvolvido como parte da **Global Solution 2025 da FIAP**, com o objetivo de criar uma solução tecnológica robusta e escalável para aumentar a segurança e a resiliência das comunidades urbanas.
 
+Link: https://echo-report-eight.vercel.app (O carregamento dos dados das páginas pode demorar devido o Render, por favor, tenha paciência 🙏)
 ---
 
 ## ✨ Funcionalidades Principais
